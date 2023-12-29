@@ -23,23 +23,23 @@ pipeline {
         }
         stage('image upload DockerHub') {
             steps {
-			        script {
+		script {
 			   
-                  withCredentials([string(credentialsId: 'DOCKER-HUB-CREDENTIALS', variable: 'DOCKERHUB')]) {
+                    withCredentials([string(credentialsId: 'docker_hub_Id', variable: 'DOCKERHUB')]) {
             
                     sh "docker login -u srirammani -p ${DOCKERHUB}"
                   }
           
                   sh "docker push srirammani/sriram369:mani-ram-${artifactName}"
 			   
-			        }
+		}
             }
-        }
+	}
         stage('Integrate Jenkins with EKS Cluster and Deploy App') {
             steps {
-                withAWS(credentials: '<AWS_CREDENTIALS_ID>', region: '<AWS_REGION>') {
+                withAWS(credentials: 'aws_Credentials_Id', region: '${region}') {
                   script {
-                    sh ('aws eks update-kubeconfig --name <EKS_CLUSTER_NAME> --region <AWS_REGION>')
+                    sh ('aws eks update-kubeconfig --name ${eksCluster} --region ${region}')
                     sh "kubectl apply -f <K8S_DEPLOY_FILE>.yaml"
                 }
                 }
