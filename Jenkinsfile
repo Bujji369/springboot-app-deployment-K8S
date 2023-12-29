@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Docker Image Build') {
             steps {
-                sh "docker build -t srirammani/sriram369:mani-ram-${artifactName} ."
+                sh "docker build -t srirammani/k8s_images:devlopment-${artifactName} ."
         }
         stage('image upload DockerHub') {
             steps {
@@ -30,7 +30,7 @@ pipeline {
                     sh "docker login -u srirammani -p ${DOCKERHUB}"
                   }
           
-                  sh "docker push srirammani/sriram369:mani-ram-${artifactName}"
+                  sh "docker push srirammani/k8s_images:devlopment-${artifactName}"
 			   
 		}
             }
@@ -40,7 +40,8 @@ pipeline {
                 withAWS(credentials: 'aws_Credentials_Id', region: '${region}') {
                   script {
                     sh ('aws eks update-kubeconfig --name ${eksCluster} --region ${region}')
-                    sh "kubectl apply -f <K8S_DEPLOY_FILE>.yaml"
+                    sh "kubectl apply -f eks-deploy-k8s.yaml"
+		    sh "sleep 20s"
                 }
                 }
         }
